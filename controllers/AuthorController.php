@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use app\models\AuthorSubscription;
+use app\models\search\AuthorSearch;
 use Yii;
 use app\models\Author;
 use yii\web\Controller;
@@ -39,12 +40,11 @@ class AuthorController extends Controller
 
     public function actionIndex(): string
     {
-        $dataProvider = new ActiveDataProvider([
-            'query' => Author::find(),
-            'pagination' => ['pageSize' => 20],
-        ]);
+        $searchModel = new AuthorSearch();
+        $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
+            'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }
