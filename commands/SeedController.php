@@ -56,7 +56,7 @@ class SeedController extends Controller
                 $book = new Book();
                 $book->author_id = $author->id;
                 $book->title = $faker->sentence(3);
-                $book->isbn = $faker->isbn13();
+                $book->isbn = $faker->unique()->isbn13();
                 $book->publish_date = $faker->date('Y-m-d H:i:s');
                 $book->preview = $faker->paragraph();
                 $book->image = 'default.jpg';
