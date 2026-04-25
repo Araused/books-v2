@@ -50,6 +50,13 @@ class m260425_074621_init extends Migration
             'CASCADE',
             'CASCADE'
         );
+
+        // Хотя приложение тестовое, в реальном были бы нужны примерно такие индексы для более оптимальной работы выборки основных данных:
+
+        $this->createIndex('idx-book-title', '{{%book}}', 'title');
+        $this->createIndex('idx-book-publish_date', '{{%book}}', 'publish_date');
+
+        $this->createIndex('idx-author-full_name', '{{%author}}', ['lastname', 'firstname']);
     }
 
     public function safeDown(): void
