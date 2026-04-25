@@ -3,9 +3,11 @@
 namespace app\models;
 
 use Yii;
+use yii\base\Exception;
 use yii\db\ActiveRecord;
-use yii\db\ActiveQuery;
-use app\jobs\SendNotificationJob; // Предполагаемый путь к джобе
+use yii\web\UploadedFile;
+use yii\helpers\FileHelper;
+use app\jobs\SendNotificationJob;
 
 /**
  * @property int $id
@@ -20,6 +22,8 @@ use app\jobs\SendNotificationJob; // Предполагаемый путь к д
  */
 class Book extends ActiveRecord
 {
+    public UploadedFile|null $imageFile = null;
+
     public static function tableName(): string
     {
         return '{{%book}}';
@@ -30,10 +34,9 @@ class Book extends ActiveRecord
         return [
             [['author_id', 'isbn', 'title', 'publish_date'], 'required'],
             [['author_id'], 'integer'],
-            [['publish_date'], 'safe'],
-            [['isbn'], 'string', 'max' => 17],
-            [['title', 'preview', 'image'], 'string', 'max' => 255],
             [['isbn'], 'unique'],
+            [['isbn'], 'string', 'max' => 17],
+            [['title', 'preview'], 'string', 'max' => 255],
             [
                 ['author_id'],
                 'exist',
@@ -41,12 +44,34 @@ class Book extends ActiveRecord
                 'targetClass' => Author::class,
                 'targetAttribute' => ['author_id' => 'id'],
             ],
+            [['imageFile'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg, jpeg'],
         ];
     }
 
-    public function getAuthor(): ActiveQuery
+    /**
+     * @throws Exception
+     */
+    public function upload(): bool
     {
-        return $this->hasOne(Author::class, ['id' => 'author_id']);
+        if ($this->validate(['imageFile']) && $this->imageFile) {
+            $path = Yii::getAlias('@webroot/uploads/books/');
+
+            FileHelper::createDirectory($path);
+
+            $fileName = uniqid() . '.' . $this->imageFile->extension;
+
+            if ($this->imageFile->saveAs($path . $fileName)) {
+                if ($this->image && file_exists($path . $this->image)) {
+                    unlink($path . $this->image);
+                }
+
+                $this->image = $fileName;
+
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function afterSave($insert, $changedAttributes): void
