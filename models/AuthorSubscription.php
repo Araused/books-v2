@@ -29,6 +29,12 @@ class AuthorSubscription extends ActiveRecord
                 return preg_replace('/[^\d+]/', '', $value);
             }],
             [
+                ['author_id', 'phone'],
+                'unique',
+                'targetAttribute' => ['author_id', 'phone'],
+                'message' => 'Этот номер телефона уже подписан на данного автора.',
+            ],
+            [
                 ['!author_id'],
                 'exist',
                 'skipOnError' => true,

@@ -57,6 +57,13 @@ class m260425_074621_init extends Migration
         $this->createIndex('idx-book-publish_date', '{{%book}}', 'publish_date');
 
         $this->createIndex('idx-author-full_name', '{{%author}}', ['lastname', 'firstname']);
+
+        $this->createIndex(
+            'idx-unique-author-phone',
+            '{{%author_subscription}}',
+            ['author_id', 'phone'],
+            true
+        );
     }
 
     public function safeDown(): void
