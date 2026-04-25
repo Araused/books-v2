@@ -11,6 +11,8 @@ use yii\db\ActiveQuery;
  * @property string $lastname
  * @property string|null $middlename
  *
+ * @property string $fullName
+ *
  * @property Book[] $books
  * @property AuthorSubscription[] $subscriptions
  */
@@ -27,6 +29,13 @@ class Author extends ActiveRecord
             [['firstname', 'lastname'], 'required'],
             [['firstname', 'lastname', 'middlename'], 'string', 'max' => 255],
         ];
+    }
+
+    public function getFullName(): string
+    {
+        return $this->firstname
+            . ($this->middlename ? ' ' . $this->middlename : '')
+            . ' ' . $this->lastname;
     }
 
     public function getBooks(): ActiveQuery
