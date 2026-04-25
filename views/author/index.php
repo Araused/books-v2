@@ -42,6 +42,18 @@ $this->params['breadcrumbs'][] = $this->title;
                 'class' => 'yii\grid\ActionColumn',
                 'header' => 'Действия',
                 'template' => '{view} {subscribe} {update} {delete}',
+                'buttons' => [
+                    'subscribe' => static function (string $url, Author $model): string {
+                        return Html::a(
+                            '<i class="fa-solid fa-bell"></i>',
+                            ['/author/subscribe', 'id' => $model->id],
+                            [
+                                'title' => 'Подписаться на автора',
+                                'class' => '',
+                            ]
+                        );
+                    },
+                ],
                 'visibleButtons' => [
                     'update' => !Yii::$app->user->isGuest,
                     'delete' => !Yii::$app->user->isGuest,
