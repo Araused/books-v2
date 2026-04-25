@@ -22,11 +22,14 @@ class AuthorSubscription extends ActiveRecord
     public function rules(): array
     {
         return [
-            [['author_id', 'phone'], 'required'],
-            [['author_id'], 'integer'],
+            [['!author_id', 'phone'], 'required'],
+            [['!author_id'], 'integer'],
             [['phone'], 'string', 'max' => 12],
+            [['phone'], 'filter', 'filter' => static function (string $value): string {
+                return preg_replace('/[^\d+]/', '', $value);
+            }],
             [
-                ['author_id'],
+                ['!author_id'],
                 'exist',
                 'skipOnError' => true,
                 'targetClass' => Author::class,

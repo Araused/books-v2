@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\AuthorSubscription;
 use Yii;
 use app\models\Author;
 use yii\web\Controller;
@@ -52,6 +53,25 @@ class AuthorController extends Controller
     {
         return $this->render('view', [
             'model' => $this->findModel($id),
+        ]);
+    }
+
+    public function actionSubscribe(int $id): string|Response
+    {
+        $authorModel = $this->loadModel($id);
+        $subscriptionModel = new AuthorSubscription();
+
+//        if ($this->request->isPost && $model->load($this->request->post())) {
+//            $model->
+//        }
+//
+//        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+//            return $this->redirect(['view', 'id' => $model->id]);
+//        }
+
+        return $this->render('subscribe', [
+            'authorModel' => $authorModel,
+            'subscriptionModel' => $subscriptionModel,
         ]);
     }
 
