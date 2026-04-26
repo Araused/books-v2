@@ -57,7 +57,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'format' => 'html',
                 'value' => static function (Book $book): string {
                     if ($book->image) {
-                        return Html::img('@web/uploads/books/' . $book->image, ['width' => '50']);
+                        return Html::img(Book::IMAGE_PATH_PREFIX . $book->image, ['width' => '50']);
                     }
 
                     return '- Нет обложки -';

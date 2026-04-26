@@ -24,7 +24,8 @@ use app\jobs\SendNotificationJob;
  */
 class Book extends ActiveRecord
 {
-    public UploadedFile|null $imageFile = null;
+    const IMAGE_PATH_PREFIX = '@web/uploads/books/';
+    public UploadedFile|string|null $imageFile = null;
 
     public static function tableName(): string
     {

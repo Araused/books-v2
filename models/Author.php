@@ -5,6 +5,7 @@ namespace app\models;
 use yii\db\ActiveRecord;
 use yii\db\ActiveQuery;
 use app\behaviors\FlashBehavior;
+use yii\helpers\ArrayHelper;
 
 /**
  * @property int $id
@@ -62,5 +63,16 @@ class Author extends ActiveRecord
         return $model['firstname']
             . ($model['middlename'] ? ' ' . $model['middlename'] : '')
             . ' ' . $model['lastname'];
+    }
+
+    public static function getAuthorsList(): array
+    {
+        return ArrayHelper::map(
+            Author::find()->asArray()->all(),
+            'id',
+            static function ($model): string {
+                return Author::authorFullName($model);
+            }
+        );
     }
 }
