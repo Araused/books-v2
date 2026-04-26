@@ -5,6 +5,7 @@ namespace app\behaviors;
 use Yii;
 use yii\base\Behavior;
 use yii\db\BaseActiveRecord;
+use yii\web\Application;
 
 class FlashBehavior extends Behavior
 {
@@ -22,12 +23,15 @@ class FlashBehavior extends Behavior
 
     public function setFlashSaved(): void
     {
-        Yii::$app->session->setFlash('success', $this->savedMessage);
+        if (Yii::$app instanceof Application) {
+            Yii::$app->session->setFlash('success', $this->savedMessage);
+        }
     }
-
 
     public function setFlashDeleted(): void
     {
-        Yii::$app->session->setFlash('success', $this->deletedMessage);
+        if (Yii::$app instanceof Application) {
+            Yii::$app->session->setFlash('danger', $this->deletedMessage);
+        }
     }
 }
