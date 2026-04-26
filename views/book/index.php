@@ -31,6 +31,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     return $model->author->fullName;
                 },
                 'filter' => ArrayHelper::map(
+                    // asArray с вызовом статического метода-склейки должен быть менее требователен к памяти чем загрузка объектами
                     Author::find()->asArray()->all(),
                     'id',
                     static function ($model): string {
