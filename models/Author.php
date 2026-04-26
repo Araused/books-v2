@@ -45,9 +45,7 @@ class Author extends ActiveRecord
 
     public function getFullName(): string
     {
-        return $this->firstname
-            . ($this->middlename ? ' ' . $this->middlename : '')
-            . ' ' . $this->lastname;
+        return self::authorFullName($this);
     }
 
     public function getBooks(): ActiveQuery
@@ -58,5 +56,11 @@ class Author extends ActiveRecord
     public function getSubscriptions(): ActiveQuery
     {
         return $this->hasMany(AuthorSubscription::class, ['author_id' => 'id']);
+    }
+
+    public static function authorFullName(array|self $model): string {
+        return $model['firstname']
+            . ($model['middlename'] ? ' ' . $model['middlename'] : '')
+            . ' ' . $model['lastname'];
     }
 }

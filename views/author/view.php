@@ -59,6 +59,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     if ($book->image) {
                         return Html::img('@web/uploads/books/' . $book->image, ['width' => '50']);
                     }
+
                     return '- Нет обложки -';
                 },
             ],

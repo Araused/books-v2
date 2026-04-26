@@ -4,6 +4,7 @@ namespace app\models;
 
 use Yii;
 use yii\base\Exception;
+use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use yii\web\UploadedFile;
 use yii\helpers\FileHelper;
@@ -84,6 +85,11 @@ class Book extends ActiveRecord
         }
 
         return false;
+    }
+
+    public function getAuthor(): ActiveQuery
+    {
+        return $this->hasOne(Author::class, ['id' => 'author_id']);
     }
 
     public function afterSave($insert, $changedAttributes): void
