@@ -4,8 +4,10 @@ namespace app\models;
 
 use Yii;
 use yii\base\Exception;
+use yii\behaviors\AttributeBehavior;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
+use yii\db\BaseActiveRecord;
 use yii\web\UploadedFile;
 use yii\helpers\FileHelper;
 use app\behaviors\FlashBehavior;
@@ -47,6 +49,7 @@ class Book extends ActiveRecord
     {
         return [
             [['author_id', 'isbn', 'title', 'publish_date'], 'required'],
+            [['publish_date'], 'string'],
             [['author_id'], 'integer'],
             [['isbn'], 'unique'],
             [['isbn'], 'string', 'max' => 17],

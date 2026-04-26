@@ -12,7 +12,7 @@ class m260425_074621_init extends Migration
             // 13 символов на сам книжный код + 4 возможных дефиса. У одной и той же книги с разными годами издания должны быть разные ISBN - поэтому поле UNIQUE
             'isbn' => $this->string(17)->notNull()->unique(),
             'title' => $this->string()->notNull(),
-            'publish_date' => $this->dateTime()->notNull(),
+            'publish_date' => $this->date()->notNull(),
             'preview' => $this->string(),
             'image' => $this->string(),
         ]);
