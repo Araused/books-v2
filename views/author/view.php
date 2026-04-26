@@ -16,11 +16,12 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <?php if (!Yii::$app->user->isGuest): ?>
-        <p>
+    <p>
+        <?php if (!Yii::$app->user->isGuest): ?>
             <?= Html::a('Редактировать автора', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        </p>
-    <?php endif; ?>
+        <?php endif; ?>
+        <?= Html::a('Подписаться на автора', ['subscribe', 'id' => $model->id], ['class' => 'btn btn-success']) ?>
+    </p>
 
     <?= DetailView::widget([
         'model' => $model,
@@ -34,7 +35,6 @@ $this->params['breadcrumbs'][] = $this->title;
     <h3 class="mt-3">Книги автора</h3>
 
     <?= GridView::widget([
-        // Передаем массив книг автора в DataProvider
         'dataProvider' => new ArrayDataProvider([
             'allModels' => $model->books,
             'pagination' => ['pageSize' => 10],

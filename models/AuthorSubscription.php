@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use app\behaviors\PhoneFilterBehavior;
 use yii\db\ActiveRecord;
 use yii\db\ActiveQuery;
 use app\behaviors\FlashBehavior;
@@ -29,6 +30,10 @@ class AuthorSubscription extends ActiveRecord
                 'savedMessage' => 'Подписка на новые книги автора успешно создана.',
                 // Текст удаления не нужен, т.к. удалять подписки исходя из ТЗ не придется
             ],
+            'filterPhone' => [
+                'class' => PhoneFilterBehavior::class,
+                'phoneAttribute' => 'phone',
+            ]
         ];
     }
 

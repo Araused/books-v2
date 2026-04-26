@@ -66,10 +66,10 @@ class AuthorController extends Controller
         $authorModel = $this->findModel($id);
         $subscriptionModel = new AuthorSubscription();
 
-        if ($this->request->isPost) {
+        if ($this->request->isPost && $subscriptionModel->load($this->request->post())) {
             $subscriptionModel->author_id = $authorModel->id;
 
-            if ($subscriptionModel->load($this->request->post()) && $subscriptionModel->save()) {
+            if ($subscriptionModel->save()) {
                 return $this->redirect(['index']);
             }
         }
