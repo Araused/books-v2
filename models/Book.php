@@ -2,16 +2,14 @@
 
 namespace app\models;
 
+use app\behaviors\NotificationBehavior;
 use Yii;
 use yii\base\Exception;
-use yii\behaviors\AttributeBehavior;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
-use yii\db\BaseActiveRecord;
 use yii\web\UploadedFile;
 use yii\helpers\FileHelper;
 use app\behaviors\FlashBehavior;
-use app\jobs\SendNotificationJob;
 
 /**
  * @property int $id
@@ -41,6 +39,9 @@ class Book extends ActiveRecord
                 'class' => FlashBehavior::class,
                 'savedMessage' => 'Книга успешно сохранена.',
                 'deletedMessage' => 'Книга успешно удалена.',
+            ],
+            'notification' => [
+                'class' => NotificationBehavior::class,
             ],
         ];
     }
@@ -94,17 +95,5 @@ class Book extends ActiveRecord
     public function getAuthor(): ActiveQuery
     {
         return $this->hasOne(Author::class, ['id' => 'author_id']);
-    }
-
-    public function afterSave($insert, $changedAttributes): void
-    {
-        parent::afterSave($insert, $changedAttributes);
-
-        if ($insert && isset(Yii::$app->queue)) {
-            Yii::$app->queue->push(new SendNotificationJob([
-                'bookId' => $this->id,
-                'authorId' => $this->author_id,
-            ]));
-        }
     }
 }
