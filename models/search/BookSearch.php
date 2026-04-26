@@ -29,7 +29,13 @@ class BookSearch extends Book
             ],
         ]);
 
+
         $this->load($params);
+
+        // Немного конвертаций с датой для простоты
+        $publishDate = $this->publish_date
+            ? date("Y-m-d", strtotime($this->publish_date))
+            : null;
 
         if (!$this->validate()) {
             return $dataProvider;
@@ -42,7 +48,7 @@ class BookSearch extends Book
 
         $query->andFilterWhere(['like', 'title', $this->title])
             ->andFilterWhere(['like', 'isbn', $this->isbn])
-            ->andFilterWhere(['like', 'publish_date', $this->publish_date]);
+            ->andFilterWhere(['like', 'publish_date', $publishDate]);
 
         return $dataProvider;
     }
