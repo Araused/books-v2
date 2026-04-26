@@ -2,16 +2,15 @@
 
 namespace app\controllers;
 
+use Throwable;
 use app\models\AuthorSubscription;
 use app\models\search\AuthorSearch;
-use Yii;
 use app\models\Author;
+use yii\web\Response;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
-use yii\data\ActiveDataProvider;
-use yii\web\Response;
 
 class AuthorController extends Controller
 {
@@ -49,6 +48,9 @@ class AuthorController extends Controller
         ]);
     }
 
+    /**
+     * @throws Throwable
+     */
     public function actionView(int $id): string
     {
         return $this->render('view', [
@@ -56,18 +58,21 @@ class AuthorController extends Controller
         ]);
     }
 
+    /**
+     * @throws Throwable
+     */
     public function actionSubscribe(int $id): string|Response
     {
-        $authorModel = $this->loadModel($id);
+        $authorModel = $this->findModel($id);
         $subscriptionModel = new AuthorSubscription();
 
-//        if ($this->request->isPost && $model->load($this->request->post())) {
-//            $model->
-//        }
-//
-//        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-//            return $this->redirect(['view', 'id' => $model->id]);
-//        }
+        if ($this->request->isPost) {
+            $subscriptionModel->author_id = $authorModel->id;
+
+            if ($subscriptionModel->load($this->request->post()) && $subscriptionModel->save()) {
+                return $this->redirect(['index']);
+            }
+        }
 
         return $this->render('subscribe', [
             'authorModel' => $authorModel,
@@ -76,7 +81,7 @@ class AuthorController extends Controller
     }
 
     /**
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function actionCreate(): string|Response
     {
@@ -92,7 +97,7 @@ class AuthorController extends Controller
     }
 
     /**
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function actionUpdate(int $id): string|Response
     {
@@ -107,6 +112,9 @@ class AuthorController extends Controller
         ]);
     }
 
+    /**
+     * @throws Throwable
+     */
     public function actionDelete(int $id): Response
     {
         $this->findModel($id)->delete();
@@ -115,7 +123,7 @@ class AuthorController extends Controller
     }
 
     /**
-     * @throws NotFoundHttpException
+     * @throws Throwable
      */
     protected function findModel(int $id): Author
     {

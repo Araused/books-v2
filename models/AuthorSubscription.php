@@ -4,6 +4,7 @@ namespace app\models;
 
 use yii\db\ActiveRecord;
 use yii\db\ActiveQuery;
+use app\behaviors\FlashBehavior;
 
 /**
  * @property int $id
@@ -17,6 +18,18 @@ class AuthorSubscription extends ActiveRecord
     public static function tableName(): string
     {
         return '{{%author_subscription}}';
+    }
+
+
+    public function behaviors(): array
+    {
+        return [
+            'flash' => [
+                'class' => FlashBehavior::class,
+                'savedMessage' => 'Подписка на новые книги автора успешно создана.',
+                // Текст удаления не нужен, т.к. удалять подписки исходя из ТЗ не придется
+            ],
+        ];
     }
 
     public function rules(): array

@@ -4,6 +4,7 @@ namespace app\models;
 
 use yii\db\ActiveRecord;
 use yii\db\ActiveQuery;
+use app\behaviors\FlashBehavior;
 
 /**
  * @property int $id
@@ -21,6 +22,17 @@ class Author extends ActiveRecord
     public static function tableName(): string
     {
         return '{{%author}}';
+    }
+
+    public function behaviors(): array
+    {
+        return [
+            'flash' => [
+                'class' => FlashBehavior::class,
+                'savedMessage' => 'Автор успешно сохранен.',
+                'deletedMessage' => 'Автор успешно удален.',
+            ],
+        ];
     }
 
     public function rules(): array

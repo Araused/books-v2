@@ -7,6 +7,7 @@ use yii\base\Exception;
 use yii\db\ActiveRecord;
 use yii\web\UploadedFile;
 use yii\helpers\FileHelper;
+use app\behaviors\FlashBehavior;
 use app\jobs\SendNotificationJob;
 
 /**
@@ -27,6 +28,17 @@ class Book extends ActiveRecord
     public static function tableName(): string
     {
         return '{{%book}}';
+    }
+
+    public function behaviors(): array
+    {
+        return [
+            'flash' => [
+                'class' => FlashBehavior::class,
+                'savedMessage' => 'Книга успешно сохранена.',
+                'deletedMessage' => 'Книга успешно удалена.',
+            ],
+        ];
     }
 
     public function rules(): array
