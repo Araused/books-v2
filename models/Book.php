@@ -10,6 +10,7 @@ use yii\web\UploadedFile;
 use yii\helpers\FileHelper;
 use app\behaviors\FlashBehavior;
 use app\behaviors\NotificationBehavior;
+use app\behaviors\BookAuthorsBehavior;
 
 /**
  * @property int $id
@@ -44,6 +45,9 @@ class Book extends ActiveRecord
             'notification' => [
                 'class' => NotificationBehavior::class,
             ],
+            'linkAuthors' => [
+                'class' => BookAuthorsBehavior::class,
+            ],
         ];
     }
 
@@ -56,6 +60,12 @@ class Book extends ActiveRecord
             [['isbn'], 'string', 'max' => 17],
             [['title', 'preview'], 'string', 'max' => 255],
             [['imageFile'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg, jpeg'],
+            [['authorIds'], 'each', 'rule' => ['integer']],
+            [['authorIds'], function ($attribute, $params, $validator): void {
+                if (empty($this->authorIds)) {
+                    $this->addError($attribute, 'Выберите хотя бы одного автора.');
+                }
+            }],
         ];
     }
 
