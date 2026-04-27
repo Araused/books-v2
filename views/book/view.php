@@ -39,7 +39,11 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attributes' => [
                     [
                         'label' => 'Автор',
-                        'value' => $model->author->fullName,
+                        'format' => 'raw',
+                        'value' => Html::a(
+                            $model->author->fullName,
+                            ['/author/view', 'id' => $model->author_id]
+                        ),
                     ],
                     'isbn',
                     'publish_date:date',
