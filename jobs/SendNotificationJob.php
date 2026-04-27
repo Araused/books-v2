@@ -10,56 +10,52 @@ use app\models\AuthorSubscription;
 
 class SendNotificationJob extends BaseObject implements JobInterface
 {
-    /**
-     * ID созданной книги (передается при создании объекта)
-     */
-    public $bookId;
+    public int $bookId;
 
-    /**
-     * Основная логика задания
-     * @param \yii\queue\Queue $queue объект очереди
-     */
-    public function execute($queue)
+    public function execute($queue): void
     {
-        // 1. Находим книгу со всеми данными автора (используем жадную загрузку)
         $book = Book::find()
             ->where(['id' => $this->bookId])
             ->with('author')
             ->one();
 
         if (!$book) {
-            Yii::error("Ошибка очереди: Книга с ID {$this->bookId} не найдена.", 'notifications');
+            Yii::error(
+                "Ошибка очереди: Книга с ID {$this->bookId} не найдена.",
+                'notifications'
+            );
+
             return;
         }
 
         $author = $book->author;
 
-        // 2. Ищем всех подписчиков этого автора
         $subscriptions = AuthorSubscription::find()
             ->where(['author_id' => $author->id])
             ->all();
 
         if (empty($subscriptions)) {
-            Yii::info("Подписчиков для автора {$author->lastname} нет. Рассылка отменена.", 'notifications');
+            Yii::info(
+                "Подписчиков для автора {$author->fullName} нет. Рассылка отменена.",
+                'notifications'
+            );
+
             return;
         }
 
-        // 3. Рассылаем уведомления
         foreach ($subscriptions as $sub) {
-            $message = "Новинка! У автора {$author->lastname} вышла книга: «{$book->title}»";
+            $message = "У автора {$author->fullName} вышла книга: «{$book->title}»";
 
-            // Здесь должна быть интеграция с реальным SMS-шлюзом
-            // Пока просто пишем в лог для проверки
             $this->sendSms($sub->phone, $message);
         }
     }
 
-    /**
-     * Имитация отправки SMS
-     */
-    protected function sendSms($phone, $message)
+    protected function sendSms(string $phone, string $message): void
     {
-        // В реальном проекте здесь будет вызов API (например, Twilio, SMS.ru и т.д.)
-        Yii::info("SMS отправлено на номер {$phone}: {$message}", 'notifications');
+        // @TODO: Здесь можно имплементировать подключение по API к какому-нибудь сервису реальной отправки СМС
+        Yii::info(
+            "SMS отправлено на номер {$phone}: {$message}",
+            'notifications'
+        );
     }
 }
