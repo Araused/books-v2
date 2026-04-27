@@ -4,6 +4,7 @@ use app\models\Book;
 use app\models\Author;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use kartik\select2\Select2;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Book */
@@ -17,8 +18,17 @@ use yii\widgets\ActiveForm;
 
     <div class="row">
         <div class="col-md-6">
-            <?= $form->field($model, 'author_id')->dropDownList(Author::getAuthorsList(), [
-                'prompt' => '- Выберите автора -'
+            <?= $form->field($model, 'authorIds')->widget(Select2::class, [
+                'data' => Author::getAuthorsList(),
+                'options' => [
+                    'placeholder' => '- Выберите авторов -',
+                    'multiple' => true,
+                ],
+                'pluginOptions' => [
+                    'allowClear' => true,
+                    'tags' => true,
+                    'tokenSeparators' => [',', ' '],
+                ],
             ]) ?>
         </div>
         <div class="col-md-6">

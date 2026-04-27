@@ -24,7 +24,9 @@ use app\behaviors\NotificationBehavior;
 class Book extends ActiveRecord
 {
     const IMAGE_PATH_PREFIX = '@web/uploads/books/';
+
     public UploadedFile|string|null $imageFile = null;
+    public ?array $authorIds = null;
 
     public static function tableName(): string
     {

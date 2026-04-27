@@ -26,11 +26,12 @@ $this->params['breadcrumbs'][] = $this->title;
 
             'title',
             [
-                'attribute' => 'author_id',
-                'value' => static function (Book $model): string {
-                    return $model->author->fullName;
-                },
+                'attribute' => 'authorFilter',
                 'filter' => Author::getAuthorsList(),
+                'format' => 'html',
+                'value' => static function (Book $model): string {
+                    return implode('<br>', ArrayHelper::getColumn((array) $model->authors, 'fullName'));
+                },
             ],
             'isbn',
             [

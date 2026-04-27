@@ -40,10 +40,18 @@ $this->params['breadcrumbs'][] = $this->title;
                     [
                         'label' => 'Автор',
                         'format' => 'raw',
-                        'value' => Html::a(
-                            $model->author->fullName,
-                            ['/author/view', 'id' => $model->author_id]
-                        ),
+                        'value' => static function (Book $model): string {
+                            $links = [];
+
+                            foreach ($model->authors as $author) {
+                                $links[] = Html::a(
+                                    $author->fullName,
+                                    ['/author/view', 'id' => $author->id]
+                                );
+                            }
+
+                            return implode('<br>', $links);
+                        },
                     ],
                     'isbn',
                     'publish_date:date',

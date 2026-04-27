@@ -7,28 +7,25 @@ use app\models\Book;
 
 class BookSearch extends Book
 {
+    public ?int $authorFilter = null;
+
     public function rules(): array
     {
         return [
-            [['id', 'author_id'], 'integer'],
+            [['id', 'authorFilter'], 'integer'],
             [['title', 'isbn', 'publish_date'], 'safe'],
         ];
     }
 
-    public function search(array $params): ActiveDataProvider
+    public function search($params): ActiveDataProvider
     {
-        $query = Book::find()->with('author');
+        $query = Book::find()->joinWith(['authors']);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            'pagination' => [
-                'pageSize' => 15,
-            ],
-            'sort' => [
-                'defaultOrder' => ['id' => SORT_DESC],
-            ],
+            'pagination' => ['pageSize' => 15],
+            'sort' => ['defaultOrder' => ['id' => SORT_DESC]],
         ]);
-
 
         $this->load($params);
 
@@ -43,7 +40,7 @@ class BookSearch extends Book
 
         $query->andFilterWhere([
             'id' => $this->id,
-            'author_id' => $this->author_id,
+            '{{%book_author}}.author_id' => $this->authorFilter,
         ]);
 
         $query->andFilterWhere(['like', 'title', $this->title])
