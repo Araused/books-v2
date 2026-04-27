@@ -2,11 +2,11 @@
 
 namespace app\controllers;
 
-use app\models\Book;
 use Throwable;
 use app\models\AuthorSubscription;
 use app\models\search\AuthorSearch;
 use app\models\Author;
+use app\models\Book;
 use yii\web\Response;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;

@@ -3,15 +3,13 @@
 namespace app\controllers;
 
 use Throwable;
-use Yii;
 use app\models\Book;
 use app\models\search\BookSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\web\Response;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
-use yii\web\Response;
-use yii\web\UploadedFile;
 
 class BookController extends Controller
 {
