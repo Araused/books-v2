@@ -66,15 +66,8 @@ class BookController extends Controller
     {
         $model = new Book();
 
-        if ($this->request->isPost) {
-            if ($model->load($this->request->post())) {
-                $model->imageFile = UploadedFile::getInstance($model, 'imageFile');
-                $model->upload();
-
-                if ($model->save()) {
-                    return $this->redirect(['view', 'id' => $model->id]);
-                }
-            }
+        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+            return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('create', [
@@ -89,16 +82,8 @@ class BookController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($this->request->isPost && $model->load($this->request->post())) {
-            $model->imageFile = UploadedFile::getInstance($model, 'imageFile');
-
-            if ($model->imageFile) {
-                $model->upload();
-            }
-
-            if ($model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
-            }
+        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+            return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('update', [
@@ -111,16 +96,7 @@ class BookController extends Controller
      */
     public function actionDelete(int $id): Response
     {
-        $model = $this->findModel($id);
-
-        if ($model->image) {
-            $path = Yii::getAlias('@webroot/uploads/books/') . $model->image;
-            if (file_exists($path)) {
-                unlink($path);
-            }
-        }
-
-        $model->delete();
+        $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
     }
