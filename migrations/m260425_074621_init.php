@@ -8,7 +8,6 @@ class m260425_074621_init extends Migration
     {
         $this->createTable('{{%book}}', [
             'id' => $this->primaryKey(),
-            'author_id' => $this->integer()->notNull(),
             // 13 символов на сам книжный код + 4 возможных дефиса. У одной и той же книги с разными годами издания должны быть разные ISBN - поэтому поле UNIQUE
             'isbn' => $this->string(17)->notNull()->unique(),
             'title' => $this->string()->notNull(),
@@ -31,13 +30,29 @@ class m260425_074621_init extends Migration
             'phone' => $this->string(12)->notNull(),
         ]);
 
+        $this->createTable('{{%book_author}}', [
+            'book_id' => $this->integer()->notNull(),
+            'author_id' => $this->integer()->notNull(),
+        ]);
+
+        // Составной PK позволит компактнее хранить данные и поможет исключить дубли, хотя и не так удобен как обычный
+        $this->addPrimaryKey('pk-book_author', '{{%book_author}}', ['book_id', 'author_id']);
+
         $this->addForeignKey(
-            'fk_book_to_author',
+            'fk-ba-book',
+            '{{%book_author}}',
+            'book_id',
             '{{%book}}',
+            'id',
+            'CASCADE'
+        );
+
+        $this->addForeignKey(
+            'fk-ba-author',
+            '{{%book_author}}',
             'author_id',
             '{{%author}}',
             'id',
-            'CASCADE',
             'CASCADE'
         );
 
@@ -68,6 +83,7 @@ class m260425_074621_init extends Migration
 
     public function safeDown(): void
     {
+        $this->dropTable('{{%book_author}}');
         $this->dropTable('{{%book}}');
         $this->dropTable('{{%author_subscription}}');
         $this->dropTable('{{%author}}');
