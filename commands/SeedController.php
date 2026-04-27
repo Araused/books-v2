@@ -2,6 +2,7 @@
 
 namespace app\commands;
 
+use Throwable;
 use Yii;
 use yii\console\Controller;
 use yii\console\ExitCode;
@@ -13,7 +14,7 @@ use Faker\Factory;
 class SeedController extends Controller
 {
     /**
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function actionRun(): int
     {
@@ -25,6 +26,7 @@ class SeedController extends Controller
 
         $db->createCommand()->checkIntegrity(false)->execute();
 
+        $db->createCommand()->truncateTable('{{%book_author}}')->execute();
         $db->createCommand()->truncateTable(AuthorSubscription::tableName())->execute();
         $db->createCommand()->truncateTable(Book::tableName())->execute();
         $db->createCommand()->truncateTable(Author::tableName())->execute();
@@ -33,9 +35,9 @@ class SeedController extends Controller
 
         echo "Generating fake data...\n";
 
-        for ($i = 0; $i < 10; $i++) {
+        $authorIds = [];
+        for ($i = 0; $i < 20; $i++) {
             $gender = rand(0, 1) ? 'male' : 'female';
-
             $author = new Author();
 
             if ($gender === 'male') {
@@ -48,33 +50,36 @@ class SeedController extends Controller
                 $author->middlename = $faker->middleNameFemale();
             }
 
-            $author->save();
+            if ($author->save()) {
+                $authorIds[] = $author->id;
 
-            $booksCount = rand(3, 7);
-
-            for ($j = 0; $j < $booksCount; $j++) {
-                $book = new Book();
-                $book->author_id = $author->id;
-                $book->title = $faker->sentence(3);
-                $book->isbn = $faker->unique()->isbn13();
-                $book->publish_date = $faker->date('Y-m-d H:i:s');
-                $book->preview = $faker->paragraph();
-                $book->image = 'default.jpg';
-                $book->save();
+                for ($k = 0; $k < rand(5, 10); $k++) {
+                    $sub = new AuthorSubscription();
+                    $sub->author_id = $author->id;
+                    $sub->phone = '+' . $faker->numerify('7##########');
+                    $sub->save();
+                }
             }
+        }
 
-            $subCount = rand(5, 10);
+        for ($j = 0; $j < 30; $j++) {
+            $book = new Book();
+            $book->title = $faker->sentence(3);
+            $book->isbn = $faker->unique()->isbn13();
+            $book->publish_date = $faker->date();
+            $book->preview = $faker->paragraph();
+            $book->image = 'default.jpg';
 
-            for ($k = 0; $k < $subCount; $k++) {
-                $sub = new AuthorSubscription();
-                $sub->author_id = $author->id;
-                $sub->phone = '+' . $faker->numerify('7##########');
-                $sub->save();
+            if ($book->save()) {
+                $randomAuthorKeys = (array) array_rand($authorIds, rand(1, 3));
+                foreach ($randomAuthorKeys as $key) {
+                    $author = Author::findOne($authorIds[$key]);
+                    $book->link('authors', $author);
+                }
             }
         }
 
         echo "Done!\n";
-
         return ExitCode::OK;
     }
 }

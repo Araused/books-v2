@@ -2,7 +2,6 @@
 
 namespace app\models;
 
-use app\behaviors\NotificationBehavior;
 use Yii;
 use yii\base\Exception;
 use yii\db\ActiveQuery;
@@ -10,17 +9,17 @@ use yii\db\ActiveRecord;
 use yii\web\UploadedFile;
 use yii\helpers\FileHelper;
 use app\behaviors\FlashBehavior;
+use app\behaviors\NotificationBehavior;
 
 /**
  * @property int $id
- * @property int $author_id
  * @property string $isbn
  * @property string $title
  * @property string $publish_date
  * @property string|null $preview
  * @property string|null $image
  *
- * @property Author $author
+ * @property Author $authors
  */
 class Book extends ActiveRecord
 {
@@ -49,19 +48,11 @@ class Book extends ActiveRecord
     public function rules(): array
     {
         return [
-            [['author_id', 'isbn', 'title', 'publish_date'], 'required'],
+            [['isbn', 'title', 'publish_date'], 'required'],
             [['publish_date'], 'string'],
-            [['author_id'], 'integer'],
             [['isbn'], 'unique'],
             [['isbn'], 'string', 'max' => 17],
             [['title', 'preview'], 'string', 'max' => 255],
-            [
-                ['author_id'],
-                'exist',
-                'skipOnError' => true,
-                'targetClass' => Author::class,
-                'targetAttribute' => ['author_id' => 'id'],
-            ],
             [['imageFile'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg, jpeg'],
         ];
     }
@@ -92,8 +83,9 @@ class Book extends ActiveRecord
         return false;
     }
 
-    public function getAuthor(): ActiveQuery
+    public function getAuthors(): ActiveQuery
     {
-        return $this->hasOne(Author::class, ['id' => 'author_id']);
+        return $this->hasMany(Author::class, ['id' => 'author_id'])
+            ->viaTable('{{%book_author}}', ['book_id' => 'id']);
     }
 }
