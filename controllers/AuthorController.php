@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\Book;
 use Throwable;
 use app\models\AuthorSubscription;
 use app\models\search\AuthorSearch;
@@ -77,6 +78,32 @@ class AuthorController extends Controller
         return $this->render('subscribe', [
             'authorModel' => $authorModel,
             'subscriptionModel' => $subscriptionModel,
+        ]);
+    }
+
+    public function actionReport(string $year = null): string
+    {
+        $year = $year ?? date('Y');
+
+        $authors = Author::find()
+            ->select(['{{%author}}.*', 'COUNT({{%book_author}}.book_id) AS booksCount'])
+            ->joinWith('books')
+            ->where(['YEAR({{%book}}.publish_date)' => $year])
+            ->groupBy('{{%author}}.id')
+            ->orderBy(['booksCount' => SORT_DESC])
+            ->limit(10)
+            ->all();
+
+        $years = Book::find()
+            ->select('YEAR(publish_date)')
+            ->distinct()
+            ->orderBy(['YEAR(publish_date)' => SORT_DESC])
+            ->column();
+
+        return $this->render('report', [
+            'authors' => $authors,
+            'years' => $years,
+            'year' => $year,
         ]);
     }
 

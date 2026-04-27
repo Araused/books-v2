@@ -19,6 +19,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <?php if (!Yii::$app->user->isGuest): ?>
             <?= Html::a('Добавить автора', ['create'], ['class' => 'btn btn-success']) ?>
         <?php endif; ?>
+        <?= Html::a('Топ авторов за год', ['report'], ['class' => 'btn btn-primary']) ?>
     </p>
 
     <?= GridView::widget([

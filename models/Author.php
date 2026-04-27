@@ -20,6 +20,8 @@ use yii\helpers\ArrayHelper;
  */
 class Author extends ActiveRecord
 {
+    public ?int $booksCount = null;
+
     public static function tableName(): string
     {
         return '{{%author}}';
